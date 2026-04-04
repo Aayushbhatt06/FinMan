@@ -7,6 +7,7 @@ interface SidebarProps {
   onAddExpenseClick: () => void;
   onReportClick: () => void;
   userName: string;
+  userRole?: "Admin" | "Viewer";
 }
 
 /** Slide-out sidebar with navigation actions. */
@@ -16,6 +17,7 @@ const Sidebar = ({
   onAddExpenseClick,
   onReportClick,
   userName,
+  userRole = "Admin",
 }: SidebarProps) => {
   return (
     <aside
@@ -42,16 +44,23 @@ const Sidebar = ({
 
       {/* Nav Links */}
       <nav className="p-3 space-y-1 text-slate-300">
-        <MenuItem icon={<Home size={18} />} label="Home" onClick={() => setOpen(false)} />
-
         <MenuItem
-          icon={<PlusCircle size={18} />}
-          label="Add Expense"
-          onClick={() => {
-            setOpen(false);
-            onAddExpenseClick();
-          }}
+          icon={<Home size={18} />}
+          label="Home"
+          onClick={() => setOpen(false)}
         />
+
+        {/* Add Expense - Only for Admin */}
+        {userRole === "Admin" && (
+          <MenuItem
+            icon={<PlusCircle size={18} />}
+            label="Add Expense"
+            onClick={() => {
+              setOpen(false);
+              onAddExpenseClick();
+            }}
+          />
+        )}
 
         <MenuItem
           icon={<FileText size={18} />}
@@ -65,12 +74,22 @@ const Sidebar = ({
 
       {/* Bottom User Card */}
       <div className="absolute bottom-4 left-0 w-full px-3">
-        <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 space-y-2">
-          <div className="px-3 py-2 rounded-lg border border-slate-800">
+        <div className="rounded-lg border border-slate-700 bg-slate-900/50 p-3 space-y-2">
+          <div className="px-3 py-2 rounded-md border border-slate-700">
             <p className="text-sm font-semibold text-white">
               {userName ? `${userName}'s` : "User's"}
             </p>
             <p className="text-xs text-slate-400">Personal Dashboard</p>
+          </div>
+          <div className="px-3 py-1.5 rounded-md bg-slate-800/50 border border-slate-700">
+            <p className="text-xs text-slate-400">Role</p>
+            <p
+              className={`text-sm font-semibold ${
+                userRole === "Admin" ? "text-slate-300" : "text-gray-400"
+              }`}
+            >
+              {userRole}
+            </p>
           </div>
         </div>
       </div>
