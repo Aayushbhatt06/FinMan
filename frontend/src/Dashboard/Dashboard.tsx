@@ -27,7 +27,8 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="relative min-h-screen bg-[#050505]">
+    // bg-[#050505]
+    <div className="relative min-h-screen bg-gradient-to-br from-[#0a0a0a] to-[#050505] text-white overflow-hidden">
       {/* Grid overlay texture */}
       <div
         className="absolute inset-0 pointer-events-none z-10"

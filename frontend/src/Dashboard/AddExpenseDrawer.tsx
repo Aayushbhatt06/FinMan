@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   X,
-  Upload,
-  Trash2,
   PlusCircle,
   Calendar,
   IndianRupee,
@@ -22,16 +20,11 @@ interface AddExpenseDrawerProps {
 
 /** Bottom sheet drawer for adding a new expense. */
 const AddExpenseDrawer = ({ open, onClose, onAdd }: AddExpenseDrawerProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [amount, setAmount] = useState("");
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<Category>("Food");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [mode, setMode] = useState<"Cash" | "Online">("Online");
-
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Close on Escape
@@ -50,29 +43,14 @@ const AddExpenseDrawer = ({ open, onClose, onAdd }: AddExpenseDrawerProps) => {
       setTitle("");
       setCategory("Food");
       setDate(new Date().toISOString().split("T")[0]);
-      handleDeleteFile();
     }
   }, [open]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
-  const handleDeleteFile = () => {
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
 
-    if (!selectedFile && (!amount || !title)) {
-      toast.error("Please enter Amount & Item Name OR Upload a Receipt");
+    if (!amount || !title) {
+      toast.error("Please enter Amount & Item Name");
       return;
     }
 
@@ -81,8 +59,8 @@ const AddExpenseDrawer = ({ open, onClose, onAdd }: AddExpenseDrawerProps) => {
     try {
       // Build the new expense without ID (backend will generate it)
       const newExpenseData: Omit<Expense, "id"> = {
-        title: title || "Scanned Receipt",
-        amount: Number(amount) || 0,
+        title,
+        amount: Number(amount),
         category,
         mode: mode,
         date,
@@ -155,80 +133,8 @@ const AddExpenseDrawer = ({ open, onClose, onAdd }: AddExpenseDrawerProps) => {
         {/* Form Body */}
         <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-6 max-w-lg mx-auto">
-            {/* Receipt Upload */}
-            <div className="space-y-3">
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">
-                Receipt Scan (AI)
-              </label>
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept="image/*"
-                className="hidden"
-              />
-
-              {!selectedFile ? (
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border border-dashed border-white/20 bg-[#1A1F2E]/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 cursor-pointer hover:border-blue-500/50 hover:bg-[#1A1F2E] transition-all group"
-                >
-                  <div className="p-3 bg-blue-500/10 rounded-full text-blue-400 group-hover:scale-110 transition-transform">
-                    <Upload size={24} />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-semibold text-white group-hover:text-blue-400 transition-colors">
-                      Tap to Upload Receipt
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      AI will auto-detect amount & details
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative bg-[#1A1F2E] border border-white/10 rounded-2xl p-3 flex items-center gap-4 animate-fadeIn">
-                  <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-white/10 bg-black">
-                    <img
-                      src={previewUrl!}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate">
-                      {selectedFile.name}
-                    </p>
-                    <p className="text-xs text-blue-400 mt-0.5">
-                      Ready to scan
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleDeleteFile}
-                    className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center justify-center relative py-2 opacity-60">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-white/10" />
-              </div>
-              <span className="relative bg-[#0F1219] px-3 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                OR ADD MANUALLY
-              </span>
-            </div>
-
             {/* Manual Fields */}
-            <div
-              className={`space-y-5 transition-opacity duration-300 ${
-                selectedFile ? "opacity-30 pointer-events-none" : "opacity-100"
-              }`}
-            >
+            <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 {/* Amount */}
                 <div className="space-y-2">
@@ -365,8 +271,6 @@ const AddExpenseDrawer = ({ open, onClose, onAdd }: AddExpenseDrawerProps) => {
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Adding...
                 </>
-              ) : selectedFile ? (
-                "Scan & Add Receipt"
               ) : (
                 "Add Expense"
               )}
