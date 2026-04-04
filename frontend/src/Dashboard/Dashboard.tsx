@@ -33,7 +33,7 @@ const Dashboard = () => {
         (expense) =>
           expense.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           expense.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          expense.amount.toString().includes(searchQuery)
+          expense.amount.toString().includes(searchQuery),
       )
     : [];
 
@@ -113,7 +113,12 @@ const Dashboard = () => {
           {/* Search Bar - Hidden on mobile */}
           <div className="hidden md:flex flex-1 max-w-xs mx-8">
             <div className="relative w-full">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-purple-400/60 transition-colors" style={{ color: searchFocused ? 'rgb(168, 85, 247)' : undefined }}>
+              <div
+                className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-purple-400/60 transition-colors"
+                style={{
+                  color: searchFocused ? "rgb(168, 85, 247)" : undefined,
+                }}
+              >
                 <Search size={18} />
               </div>
               <input
@@ -125,54 +130,61 @@ const Dashboard = () => {
                 placeholder="Search expenses..."
                 className="w-full pl-10 pr-4 py-2 rounded-lg bg-gradient-to-r from-slate-800/40 to-slate-900/40 border border-purple-500/20 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500/40 focus:ring-2 focus:ring-purple-500/15 transition-all backdrop-blur-md shadow-lg shadow-purple-500/10 hover:shadow-lg hover:shadow-purple-500/20 hover:border-purple-500/35"
               />
-              
+
               {/* Search Results Dropdown */}
-              {searchFocused && searchQuery.trim() && filteredExpenses.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 border border-purple-500/30 rounded-lg shadow-2xl shadow-purple-500/10 backdrop-blur-md z-50 max-h-[400px] overflow-y-auto custom-scrollbar">
-                  <div className="p-2">
-                    {filteredExpenses.slice(0, 8).map((expense) => (
-                      <div
-                        key={expense.id}
-                        className="px-3 py-2.5 rounded-md hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-purple-500/30 group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate group-hover:text-purple-300 transition-colors">
-                              {expense.title}
-                            </p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-gray-500">
-                                {new Date(expense.date).toLocaleDateString("en-US", {
-                                  month: "short",
-                                  day: "numeric",
-                                })}
-                              </span>
-                              <span className="text-[10px] text-purple-400/70 uppercase tracking-wide font-semibold bg-purple-500/10 px-1.5 rounded">
-                                {expense.category}
-                              </span>
+              {searchFocused &&
+                searchQuery.trim() &&
+                filteredExpenses.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 border border-purple-500/30 rounded-lg shadow-2xl shadow-purple-500/10 backdrop-blur-md z-50 max-h-[400px] overflow-y-auto custom-scrollbar">
+                    <div className="p-2">
+                      {filteredExpenses.slice(0, 8).map((expense) => (
+                        <div
+                          key={expense.id}
+                          className="px-3 py-2.5 rounded-md hover:bg-slate-800/50 cursor-pointer transition-colors border border-transparent hover:border-purple-500/30 group"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-white truncate group-hover:text-purple-300 transition-colors">
+                                {expense.title}
+                              </p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs text-gray-500">
+                                  {new Date(expense.date).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                    },
+                                  )}
+                                </span>
+                                <span className="text-[10px] text-purple-400/70 uppercase tracking-wide font-semibold bg-purple-500/10 px-1.5 rounded">
+                                  {expense.category}
+                                </span>
+                              </div>
                             </div>
+                            <span className="text-sm font-semibold text-white ml-3 shrink-0">
+                              ₹{expense.amount.toLocaleString()}
+                            </span>
                           </div>
-                          <span className="text-sm font-semibold text-white ml-3 shrink-0">
-                            ₹{expense.amount.toLocaleString()}
-                          </span>
                         </div>
-                      </div>
-                    ))}
-                    {filteredExpenses.length > 8 && (
-                      <div className="px-3 py-2 text-center text-xs text-gray-500 border-t border-slate-700/50 mt-2 pt-2">
-                        +{filteredExpenses.length - 8} more results
-                      </div>
-                    )}
+                      ))}
+                      {filteredExpenses.length > 8 && (
+                        <div className="px-3 py-2 text-center text-xs text-gray-500 border-t border-slate-700/50 mt-2 pt-2">
+                          +{filteredExpenses.length - 8} more results
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
-              
+                )}
+
               {/* No results message */}
-              {searchFocused && searchQuery.trim() && filteredExpenses.length === 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 border border-purple-500/20 rounded-lg shadow-2xl shadow-purple-500/5 backdrop-blur-md z-50 p-3 text-center">
-                  <p className="text-sm text-gray-400">No expenses found</p>
-                </div>
-              )}
+              {searchFocused &&
+                searchQuery.trim() &&
+                filteredExpenses.length === 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 border border-purple-500/20 rounded-lg shadow-2xl shadow-purple-500/5 backdrop-blur-md z-50 p-3 text-center">
+                    <p className="text-sm text-gray-400">No expenses found</p>
+                  </div>
+                )}
             </div>
           </div>
 
@@ -261,7 +273,9 @@ const Dashboard = () => {
         </header>
 
         {/* Dashboard Content */}
-        <div className={`flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 py-8 flex flex-col gap-8 transition-all duration-200 ${searchFocused && searchQuery.trim() ? "blur-sm opacity-40 pointer-events-none" : ""}`}>
+        <div
+          className={`flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 py-8 flex flex-col gap-8 transition-all duration-200 ${searchFocused && searchQuery.trim() ? "blur-sm opacity-40 pointer-events-none" : ""}`}
+        >
           <StatsGrid stats={stats} expensesCount={expenses.length} />
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 min-h-[400px]">
@@ -276,7 +290,9 @@ const Dashboard = () => {
         </div>
 
         {/* Footer */}
-        <footer className={`mt-auto border-t border-white/5 py-6 text-center text-xs text-gray-600 transition-all duration-200 ${searchFocused && searchQuery.trim() ? "blur-sm opacity-40 pointer-events-none" : ""}`}>
+        <footer
+          className={`mt-auto border-t border-white/5 py-6 text-center text-xs text-gray-600 transition-all duration-200 ${searchFocused && searchQuery.trim() ? "blur-sm opacity-40 pointer-events-none" : ""}`}
+        >
           Built with ♥ by {DEMO_USER_NAME} · Demo Mode
         </footer>
       </main>
