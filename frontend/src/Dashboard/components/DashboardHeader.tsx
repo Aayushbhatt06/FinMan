@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, BarChart3 } from "lucide-react";
 import SearchBar from "./SearchBar";
 import ProfileSwitcher from "./ProfileSwitcher";
 import type { Expense } from "../../hooks/useExpenses";
@@ -20,6 +20,8 @@ interface DashboardHeaderProps {
   filteredExpenses: Expense[];
   onReportClick: () => void;
   onAddExpenseClick: () => void;
+  activePage: "dashboard" | "categories";
+  onPageChange: (page: "dashboard" | "categories") => void;
 }
 
 const DashboardHeader = ({
@@ -39,26 +41,28 @@ const DashboardHeader = ({
   filteredExpenses,
   onReportClick,
   onAddExpenseClick,
+  activePage,
+  onPageChange,
 }: DashboardHeaderProps) => {
   return (
     <header
-      className={`h-16 sm:h-20 flex items-center justify-between px-4 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-xl shrink-0 transition-colors duration-200 border-b ${
+      className={`h-16 sm:h-[72px] flex items-center justify-between px-4 sm:px-8 lg:px-12 sticky top-0 z-30 backdrop-blur-xl shrink-0 transition-colors duration-200 border-b ${
         theme === "dark"
-          ? "bg-[#050505]/80 border-white/5"
+          ? "bg-[#09090b]/80 border-white/[0.05]"
           : "bg-white/60 border-gray-200/50"
       }`}
     >
       {/* Left Section: Hamburger & Title */}
-      <div className="flex items-center gap-4 sm:gap-6">
+      <div className="flex items-center gap-4 sm:gap-5">
         <button
           onClick={onSidebarToggle}
           className={`p-2 -ml-1 rounded-xl transition ${
             theme === "dark"
-              ? "text-gray-400 hover:text-white"
-              : "text-gray-600 hover:text-gray-900"
+              ? "text-zinc-500 hover:text-white hover:bg-white/[0.05]"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
           } ${sidebarOpen ? "opacity-0 pointer-events-none" : ""}`}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path
               d="M4 6H20M4 12H20M4 18H20"
               stroke="currentColor"
@@ -71,20 +75,18 @@ const DashboardHeader = ({
 
         <div>
           <h1
-            className={`text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight ${
-              theme === "dark"
-                ? "bg-linear-to-r from-blue-300 to-purple-400 bg-clip-text text-transparent"
-                : "text-purple-700"
+            className={`text-lg sm:text-xl font-bold tracking-tight ${
+              theme === "dark" ? "text-white" : "text-gray-900"
             }`}
           >
             {userName}'s Dashboard
           </h1>
           <p
-            className={`text-[11px] sm:text-xs font-medium ${
-              theme === "dark" ? "text-gray-500" : "text-gray-600"
+            className={`text-[11px] font-medium ${
+              theme === "dark" ? "text-zinc-500" : "text-gray-500"
             }`}
           >
-            Overview for {currentMonthYear}
+            {currentMonthYear}
           </p>
         </div>
       </div>
@@ -100,29 +102,45 @@ const DashboardHeader = ({
       />
 
       {/* Right Section: Action Buttons */}
-      <div className="hidden sm:flex items-center gap-3">
+      <div className="hidden sm:flex items-center gap-2">
         <button
-          onClick={onReportClick}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm transition-all active:scale-95 ${
-            theme === "dark"
-              ? "bg-white text-black hover:bg-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-              : "bg-gray-900 text-white hover:bg-gray-800 shadow-[0_0_20px_rgba(0,0,0,0.15)]"
+          onClick={() => onPageChange("categories")}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg font-medium text-sm transition-all ${
+            activePage === "categories"
+              ? theme === "dark"
+                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+                : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              : theme === "dark"
+                ? "text-zinc-400 hover:text-white hover:bg-white/[0.05] border border-transparent"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent"
           }`}
         >
-          <FileText size={16} />
+          <BarChart3 size={15} />
+          Categories
+        </button>
+
+        <button
+          onClick={onReportClick}
+          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg font-medium text-sm transition-all border ${
+            theme === "dark"
+              ? "text-zinc-400 hover:text-white hover:bg-white/[0.05] border-transparent"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 border-transparent"
+          }`}
+        >
+          <FileText size={15} />
           Reports
         </button>
 
         {userRole === "Admin" && (
           <button
             onClick={onAddExpenseClick}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm transition-all active:scale-95 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
               theme === "dark"
-                ? "bg-white text-black hover:bg-gray-200 shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-                : "bg-gray-900 text-white hover:bg-gray-800 shadow-[0_0_20px_rgba(0,0,0,0.15)]"
+                ? "bg-emerald-500 text-black hover:bg-emerald-400 shadow-lg shadow-emerald-500/20"
+                : "bg-gray-900 text-white hover:bg-gray-800"
             }`}
           >
-            + Add Expense
+            + Add
           </button>
         )}
 

@@ -8,43 +8,51 @@ interface CategoryStyle {
 }
 
 const CATEGORY_STYLES: Record<Category | "General", CategoryStyle> = {
-  Food: { color: "#3b82f6", bg: "bg-blue-500", shadow: "shadow-blue-500/50" },
+  Food: { color: "#3b82f6", bg: "bg-blue-500", shadow: "shadow-blue-500/30" },
   Travel: {
-    color: "#8b5cf6",
-    bg: "bg-violet-500",
-    shadow: "shadow-violet-500/50",
+    color: "#a78bfa",
+    bg: "bg-violet-400",
+    shadow: "shadow-violet-400/30",
   },
   Fuel: {
-    color: "#10b981",
-    bg: "bg-emerald-500",
-    shadow: "shadow-emerald-500/50",
+    color: "#34d399",
+    bg: "bg-emerald-400",
+    shadow: "shadow-emerald-400/30",
   },
   Shopping: {
-    color: "#ec4899",
-    bg: "bg-pink-500",
-    shadow: "shadow-pink-500/50",
+    color: "#f472b6",
+    bg: "bg-pink-400",
+    shadow: "shadow-pink-400/30",
   },
   Entertainment: {
-    color: "#f59e0b",
-    bg: "bg-amber-500",
-    shadow: "shadow-amber-500/50",
+    color: "#fbbf24",
+    bg: "bg-amber-400",
+    shadow: "shadow-amber-400/30",
   },
-  Bills: { color: "#ef4444", bg: "bg-red-500", shadow: "shadow-red-500/50" },
-  Health: { color: "#06b6d4", bg: "bg-cyan-500", shadow: "shadow-cyan-500/50" },
+  Bills: {
+    color: "#f87171",
+    bg: "bg-red-400",
+    shadow: "shadow-red-400/30",
+  },
+  Health: {
+    color: "#22d3ee",
+    bg: "bg-cyan-400",
+    shadow: "shadow-cyan-400/30",
+  },
   Education: {
-    color: "#0ea5e9",
-    bg: "bg-sky-500",
-    shadow: "shadow-sky-500/50",
+    color: "#38bdf8",
+    bg: "bg-sky-400",
+    shadow: "shadow-sky-400/30",
   },
   Groceries: {
-    color: "#84cc16",
-    bg: "bg-lime-500",
-    shadow: "shadow-lime-500/50",
+    color: "#a3e635",
+    bg: "bg-lime-400",
+    shadow: "shadow-lime-400/30",
   },
   General: {
-    color: "#6b7280",
-    bg: "bg-gray-500",
-    shadow: "shadow-gray-500/50",
+    color: "#71717a",
+    bg: "bg-zinc-500",
+    shadow: "shadow-zinc-500/30",
   },
 };
 
@@ -59,15 +67,14 @@ interface BentoCardProps {
 
 export const BentoCard = ({ children, className = "" }: BentoCardProps) => (
   <div
-    className={`relative isolate flex flex-col overflow-hidden
-      bg-[#0c0f16]/90 backdrop-blur-2xl
+    className={`relative overflow-hidden
+      bg-[#111215]/80 backdrop-blur-xl
       border border-white/[0.06] rounded-2xl p-5 sm:p-6
-      shadow-lg
-      transition-all duration-300
-      hover:shadow-xl hover:shadow-blue-500/5 hover:border-white/10
+      transition-all duration-300 ease-out
+      hover:border-white/[0.1] hover:bg-[#131518]/90
+      hover:translate-y-[-1px] hover:shadow-lg hover:shadow-black/20
       ${className}`}
   >
-    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl pointer-events-none -mr-10 -mt-10" />
     <div className="relative z-10 flex-1 flex flex-col w-full">{children}</div>
   </div>
 );
@@ -90,9 +97,9 @@ export const CustomTooltip = ({
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="bg-[#111827] border border-white/10 px-3 py-2.5 rounded-xl shadow-2xl">
-      <p className="text-gray-400 text-[11px] mb-0.5">{label}</p>
-      <p className="text-white font-bold text-sm">
+    <div className="bg-[#1a1b1f] border border-white/10 px-3.5 py-2.5 rounded-xl shadow-2xl shadow-black/40">
+      <p className="text-zinc-500 text-[11px] font-medium mb-0.5">{label}</p>
+      <p className="text-white font-bold text-sm tracking-tight">
         ₹{payload[0].value.toLocaleString()}
       </p>
     </div>

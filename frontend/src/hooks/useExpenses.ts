@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-// ─── Type Definitions (moved from mockData) ──────────────────
+// ─── Type Definitions ─────────────────────────────────────────
 export const CATEGORIES = [
   "Food",
   "Travel",
@@ -47,21 +47,43 @@ export interface ModeStat {
   total: number;
 }
 
+/** Enriched category detail for Category Analysis */
+export interface CategoryDetail {
+  category: Category;
+  total: number;
+  count: number;
+  highestPayment: number;
+  highestPaymentTitle: string;
+  averageAmount: number;
+  percentage: number;
+}
+
 /** Dashboard summary statistics */
 export interface DashboardStats {
   totalExpense: number;
+  averageExpense: number;
+  highestExpense: Expense | null;
   dailyStats: DailyStat[];
   categoryStats: CategoryStat[];
   modeStats: ModeStat[];
+  categoryDetails: CategoryDetail[];
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
 // ─── Frontend Aggregation Functions ──────────────────────────
 
-// Compute dashboard stats from the raw expense list
 function computeStats(expenses: Expense[]): DashboardStats {
   const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const averageExpense =
+    expenses.length > 0 ? totalExpense / expenses.length : 0;
+
+  // Highest single expense
+  const highestExpense =
+    expenses.length > 0
+      ? expenses.reduce((max, e) => (e.amount > max.amount ? e : max))
+      : null;
 
   // Daily aggregation
   const dailyMap = new Map<string, number>();
@@ -72,7 +94,7 @@ function computeStats(expenses: Expense[]): DashboardStats {
     .map(([_id, total]) => ({ _id, total }))
     .sort((a, b) => a._id.localeCompare(b._id));
 
-  // Category aggregation
+  // Category aggregation (basic)
   const catMap = new Map<Category, number>();
   for (const e of expenses) {
     catMap.set(e.category, (catMap.get(e.category) ?? 0) + e.amount);
@@ -91,7 +113,50 @@ function computeStats(expenses: Expense[]): DashboardStats {
     { _id: "Online", total: modeMap.get("Online") ?? 0 },
   ];
 
-  return { totalExpense, dailyStats, categoryStats, modeStats };
+  // Enriched category details
+  const catDetailMap = new Map<
+    Category,
+    { total: number; count: number; highest: number; highestTitle: string }
+  >();
+  for (const e of expenses) {
+    const existing = catDetailMap.get(e.category);
+    if (existing) {
+      existing.total += e.amount;
+      existing.count += 1;
+      if (e.amount > existing.highest) {
+        existing.highest = e.amount;
+        existing.highestTitle = e.title;
+      }
+    } else {
+      catDetailMap.set(e.category, {
+        total: e.amount,
+        count: 1,
+        highest: e.amount,
+        highestTitle: e.title,
+      });
+    }
+  }
+  const categoryDetails: CategoryDetail[] = [...catDetailMap.entries()]
+    .map(([category, data]) => ({
+      category,
+      total: data.total,
+      count: data.count,
+      highestPayment: data.highest,
+      highestPaymentTitle: data.highestTitle,
+      averageAmount: data.total / data.count,
+      percentage: totalExpense > 0 ? (data.total / totalExpense) * 100 : 0,
+    }))
+    .sort((a, b) => b.total - a.total);
+
+  return {
+    totalExpense,
+    averageExpense,
+    highestExpense,
+    dailyStats,
+    categoryStats,
+    modeStats,
+    categoryDetails,
+  };
 }
 
 // ─── API Functions ──────────────────────────────────────────
@@ -175,7 +240,9 @@ export function useExpenses() {
       await deleteExpenseAPI(id);
       setExpenses((prev) => prev.filter((e) => e.id !== id));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete expense");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete expense",
+      );
       throw err;
     }
   }, []);

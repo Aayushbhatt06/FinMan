@@ -1,4 +1,12 @@
-import { Home, PlusCircle, FileText, X, Sun, Moon } from "lucide-react";
+import {
+  Home,
+  PlusCircle,
+  FileText,
+  BarChart3,
+  X,
+  Sun,
+  Moon,
+} from "lucide-react";
 
 // ─── Props ──────────────────────────────────────────────────
 interface SidebarProps {
@@ -6,10 +14,12 @@ interface SidebarProps {
   setOpen: (open: boolean) => void;
   onAddExpenseClick: () => void;
   onReportClick: () => void;
+  onCategoryClick: () => void;
   userName: string;
   userRole?: "Admin" | "Viewer";
   theme?: "dark" | "light";
   onThemeChange?: (theme: "dark" | "light") => void;
+  activePage?: "dashboard" | "categories";
 }
 
 /** Slide-out sidebar with navigation actions. */
@@ -18,10 +28,12 @@ const Sidebar = ({
   setOpen,
   onAddExpenseClick,
   onReportClick,
+  onCategoryClick,
   userName,
   userRole = "Admin",
   theme = "dark",
   onThemeChange,
+  activePage = "dashboard",
 }: SidebarProps) => {
   return (
     <aside
@@ -33,26 +45,26 @@ const Sidebar = ({
         ${open ? "translate-x-0" : "-translate-x-full"}
         ${
           theme === "dark"
-            ? "bg-slate-900/95 border-slate-800"
+            ? "bg-[#0c0d10]/95 border-white/[0.06]"
             : "bg-white/90 border-gray-200"
         }
       `}
     >
       {/* Header */}
       <div
-        className={`p-10 flex items-center justify-between px-4 h-16 border-b transition-colors duration-200 ${
-          theme === "dark" ? "border-slate-800" : "border-gray-200"
+        className={`flex items-center justify-between px-5 h-16 border-b transition-colors duration-200 ${
+          theme === "dark" ? "border-white/[0.06]" : "border-gray-200"
         }`}
       >
-        <span className="ml-2 text-2xl font-bold bg-linear-to-r from-blue-300 to-purple-600 bg-clip-text text-transparent">
+        <span className="text-xl font-bold text-emerald-400 tracking-tight">
           FinMan
         </span>
         <button
           onClick={() => setOpen(false)}
           className={`p-2 rounded-lg transition ${
             theme === "dark"
-              ? "hover:bg-slate-800 text-white"
-              : "hover:bg-gray-200 text-gray-900"
+              ? "hover:bg-white/[0.05] text-zinc-400 hover:text-white"
+              : "hover:bg-gray-100 text-gray-500"
           }`}
         >
           <X size={18} />
@@ -61,19 +73,31 @@ const Sidebar = ({
 
       {/* Nav Links */}
       <nav
-        className={`p-3 space-y-1 ${theme === "dark" ? "text-slate-300" : "text-gray-700"}`}
+        className={`p-3 space-y-0.5 ${theme === "dark" ? "text-zinc-400" : "text-gray-600"}`}
       >
         <MenuItem
-          icon={<Home size={18} />}
-          label="Home"
+          icon={<Home size={17} />}
+          label="Dashboard"
           onClick={() => setOpen(false)}
           theme={theme}
+          active={activePage === "dashboard"}
+        />
+
+        <MenuItem
+          icon={<BarChart3 size={17} />}
+          label="Categories"
+          onClick={() => {
+            setOpen(false);
+            onCategoryClick();
+          }}
+          theme={theme}
+          active={activePage === "categories"}
         />
 
         {/* Add Expense - Only for Admin */}
         {userRole === "Admin" && (
           <MenuItem
-            icon={<PlusCircle size={18} />}
+            icon={<PlusCircle size={17} />}
             label="Add Expense"
             onClick={() => {
               setOpen(false);
@@ -84,7 +108,7 @@ const Sidebar = ({
         )}
 
         <MenuItem
-          icon={<FileText size={18} />}
+          icon={<FileText size={17} />}
           label="Reports"
           onClick={() => {
             setOpen(false);
@@ -95,39 +119,39 @@ const Sidebar = ({
 
         {/* Theme Switcher */}
         <div
-          className={`mt-6 pt-6 border-t ${theme === "dark" ? "border-slate-700" : "border-gray-200"}`}
+          className={`mt-6 pt-6 border-t ${theme === "dark" ? "border-white/[0.06]" : "border-gray-200"}`}
         >
           <p
-            className={`text-xs font-semibold uppercase tracking-wide mb-3 ${theme === "dark" ? "text-slate-500" : "text-gray-500"}`}
+            className={`text-[10px] font-semibold uppercase tracking-wider mb-3 px-3 ${
+              theme === "dark" ? "text-zinc-600" : "text-gray-400"
+            }`}
           >
-            Theme
+            Appearance
           </p>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <button
               onClick={() => onThemeChange?.("dark")}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
                 theme === "dark"
-                  ? theme === "dark"
-                    ? "bg-slate-800 text-white"
-                    : "text-gray-600 hover:bg-gray-100"
-                  : `text-gray-700 hover:bg-gray-100 ${theme === "light" ? "bg-gray-100" : ""}`
+                  ? "bg-white/[0.05] text-white"
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
             >
-              <Moon size={16} />
-              Dark Mode
+              <Moon size={15} />
+              Dark
             </button>
             <button
               onClick={() => onThemeChange?.("light")}
-              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
                 theme === "light"
                   ? "bg-gray-200 text-gray-900"
                   : theme === "dark"
-                    ? "text-slate-300 hover:bg-slate-800"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "text-zinc-400 hover:bg-white/[0.04]"
+                    : "text-gray-500 hover:bg-gray-100"
               }`}
             >
-              <Sun size={16} />
-              Light Mode
+              <Sun size={15} />
+              Light
             </button>
           </div>
         </div>
@@ -136,15 +160,15 @@ const Sidebar = ({
       {/* Bottom User Card */}
       <div className="absolute bottom-4 left-0 w-full px-3">
         <div
-          className={`rounded-lg border p-3 space-y-2 transition-colors duration-200 ${
+          className={`rounded-xl border p-3 space-y-2 transition-colors duration-200 ${
             theme === "dark"
-              ? "border-slate-700 bg-slate-900/50"
-              : "border-gray-200 bg-gray-100/50"
+              ? "border-white/[0.06] bg-white/[0.02]"
+              : "border-gray-200 bg-gray-50"
           }`}
         >
           <div
-            className={`px-3 py-2 rounded-md border transition-colors duration-200 ${
-              theme === "dark" ? "border-slate-700" : "border-gray-200"
+            className={`px-3 py-2 rounded-lg border transition-colors duration-200 ${
+              theme === "dark" ? "border-white/[0.05]" : "border-gray-200"
             }`}
           >
             <p
@@ -153,20 +177,20 @@ const Sidebar = ({
               {userName ? `${userName}'s` : "User's"}
             </p>
             <p
-              className={`text-xs ${theme === "dark" ? "text-slate-400" : "text-gray-500"}`}
+              className={`text-[11px] ${theme === "dark" ? "text-zinc-500" : "text-gray-500"}`}
             >
               Personal Dashboard
             </p>
           </div>
           <div
-            className={`px-3 py-1.5 rounded-md border transition-colors duration-200 ${
+            className={`px-3 py-1.5 rounded-lg border transition-colors duration-200 ${
               theme === "dark"
-                ? "bg-slate-800/50 border-slate-700"
-                : "bg-gray-200/50 border-gray-300"
+                ? "bg-white/[0.02] border-white/[0.05]"
+                : "bg-gray-100 border-gray-200"
             }`}
           >
             <p
-              className={`text-xs ${theme === "dark" ? "text-slate-400" : "text-gray-500"}`}
+              className={`text-[10px] ${theme === "dark" ? "text-zinc-500" : "text-gray-500"}`}
             >
               Role
             </p>
@@ -174,10 +198,10 @@ const Sidebar = ({
               className={`text-sm font-semibold ${
                 userRole === "Admin"
                   ? theme === "dark"
-                    ? "text-slate-300"
-                    : "text-gray-900"
+                    ? "text-emerald-400"
+                    : "text-emerald-700"
                   : theme === "dark"
-                    ? "text-gray-400"
+                    ? "text-zinc-400"
                     : "text-gray-600"
               }`}
             >
@@ -196,13 +220,26 @@ interface MenuItemProps {
   label: string;
   onClick: () => void;
   theme?: "dark" | "light";
+  active?: boolean;
 }
 
-const MenuItem = ({ icon, label, onClick, theme = "dark" }: MenuItemProps) => (
+const MenuItem = ({
+  icon,
+  label,
+  onClick,
+  theme = "dark",
+  active = false,
+}: MenuItemProps) => (
   <div
     onClick={onClick}
-    className={`flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-      theme === "dark" ? "hover:bg-slate-800" : "hover:bg-gray-200"
+    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer text-sm font-medium transition-all ${
+      active
+        ? theme === "dark"
+          ? "bg-emerald-500/10 text-emerald-400"
+          : "bg-emerald-50 text-emerald-700"
+        : theme === "dark"
+          ? "hover:bg-white/[0.04] hover:text-white"
+          : "hover:bg-gray-100 hover:text-gray-900"
     }`}
   >
     {icon}

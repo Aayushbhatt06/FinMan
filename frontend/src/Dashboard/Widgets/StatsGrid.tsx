@@ -1,8 +1,10 @@
 import {
-  Wallet,
-  Activity,
-  CreditCard,
-  Layers,
+  TrendingUp,
+  ArrowUpDown,
+  Banknote,
+  Crown,
+  Calculator,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { BentoCard } from "./DashboardUI";
@@ -13,7 +15,9 @@ interface StatCardProps {
   value: string | number;
   subValue?: string;
   icon: LucideIcon;
-  color: string;
+  accentColor: string;
+  accentBg: string;
+  delay: number;
 }
 
 const StatCard = ({
@@ -21,30 +25,29 @@ const StatCard = ({
   value,
   subValue,
   icon: Icon,
-  color,
+  accentColor,
+  accentBg,
+  delay,
 }: StatCardProps) => (
-  <BentoCard>
-    <div className="flex flex-col h-full gap-3">
-      <div className="flex items-center gap-3">
-        <div
-          className={`p-2 rounded-lg bg-white/5 border border-white/5 ${color}`}
-        >
-          <Icon size={18} />
-        </div>
-        <p className="text-gray-400 text-[11px] font-semibold uppercase tracking-wider">
+  <BentoCard className={`animate-fade-in-up delay-${delay}`}>
+    <div className="flex items-start justify-between gap-3">
+      <div className="flex-1 min-w-0">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-2">
           {title}
         </p>
-      </div>
-
-      <div className="mt-auto pt-1">
-        <h3 className="text-2xl font-bold text-white tracking-tight">
+        <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight truncate">
           {value}
         </h3>
         {subValue && (
-          <p className="text-[11px] mt-1 font-medium text-gray-500">
+          <p className="text-[11px] mt-1.5 font-medium text-zinc-500">
             {subValue}
           </p>
         )}
+      </div>
+      <div
+        className={`p-2.5 rounded-xl shrink-0 ${accentBg}`}
+      >
+        <Icon size={18} className={accentColor} />
       </div>
     </div>
   </BentoCard>
@@ -63,36 +66,66 @@ const StatsGrid = ({ stats, expensesCount }: StatsGridProps) => {
   const topCategory =
     stats.categoryStats.length > 0
       ? [...stats.categoryStats].sort((a, b) => b.total - a.total)[0]._id
-      : "-";
+      : "—";
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+    <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
       <StatCard
         title="Total Spent"
         value={`₹${stats.totalExpense.toLocaleString()}`}
-        icon={Wallet}
-        color="text-blue-400"
+        icon={TrendingUp}
+        accentColor="text-emerald-400"
+        accentBg="bg-emerald-500/10"
+        delay={1}
       />
       <StatCard
         title="Transactions"
         value={expensesCount}
         subValue="This Month"
-        icon={Activity}
-        color="text-purple-400"
+        icon={ArrowUpDown}
+        accentColor="text-blue-400"
+        accentBg="bg-blue-500/10"
+        delay={2}
       />
       <StatCard
         title="Cash / Online"
-        value={`₹${cashTotal.toLocaleString()} / ₹${onlineTotal.toLocaleString()}`}
-        subValue="Split"
-        icon={CreditCard}
-        color="text-emerald-400"
+        value={`₹${cashTotal.toLocaleString()}`}
+        subValue={`₹${onlineTotal.toLocaleString()} online`}
+        icon={Banknote}
+        accentColor="text-violet-400"
+        accentBg="bg-violet-500/10"
+        delay={3}
       />
       <StatCard
         title="Top Category"
         value={topCategory}
         subValue="Most Active"
-        icon={Layers}
-        color="text-pink-400"
+        icon={Crown}
+        accentColor="text-amber-400"
+        accentBg="bg-amber-500/10"
+        delay={4}
+      />
+      <StatCard
+        title="Avg / Txn"
+        value={`₹${Math.round(stats.averageExpense).toLocaleString()}`}
+        subValue="Per transaction"
+        icon={Calculator}
+        accentColor="text-cyan-400"
+        accentBg="bg-cyan-500/10"
+        delay={5}
+      />
+      <StatCard
+        title="Highest"
+        value={
+          stats.highestExpense
+            ? `₹${stats.highestExpense.amount.toLocaleString()}`
+            : "—"
+        }
+        subValue={stats.highestExpense?.title ?? ""}
+        icon={Zap}
+        accentColor="text-rose-400"
+        accentBg="bg-rose-500/10"
+        delay={6}
       />
     </div>
   );

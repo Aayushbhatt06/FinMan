@@ -8,13 +8,16 @@ import DashboardHeader from "./components/DashboardHeader";
 import StatsGrid from "./Widgets/StatsGrid";
 import SpendingChart from "./Widgets/SpendingChart";
 import CategoryChart from "./Widgets/CategoryChart";
+import PaymentModeChart from "./Widgets/PaymentModeChart";
 import RecentTransactions from "./Widgets/RecentTransactions";
+import CategoryAnalysis from "./Widgets/CategoryAnalysis";
 
 import { useExpenses } from "../hooks/useExpenses";
 const DEMO_USER_NAME = "Aayush";
 
 type UserRole = "Admin" | "Viewer";
 type Theme = "dark" | "light";
+type Page = "dashboard" | "categories";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,6 +28,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
   const [theme, setThemeState] = useState<Theme>("dark");
+  const [activePage, setActivePage] = useState<Page>("dashboard");
 
   // Load theme from localStorage on mount
   useEffect(() => {
@@ -40,7 +44,7 @@ const Dashboard = () => {
     localStorage.setItem("app-theme", newTheme);
   };
 
-  // All expense state + computed stats from localStorage-backed hook
+  // All expense state + computed stats from API-backed hook
   const { expenses, stats, addExpense, deleteExpense } = useExpenses();
 
   // Filter expenses based on search query
@@ -62,31 +66,16 @@ const Dashboard = () => {
     <div
       className={`relative min-h-screen overflow-hidden transition-colors duration-300 ${
         theme === "dark"
-          ? "bg-gradient-to-br from-[#0a0a0a] to-[#050505] text-white"
-          : "bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900"
+          ? "bg-[#09090b] text-white"
+          : "bg-gray-50 text-gray-900"
       }`}
     >
-      {/* Grid overlay texture */}
-      <div
-        className="absolute inset-0 pointer-events-none z-10"
-        style={{
-          backgroundImage:
-            theme === "dark"
-              ? "linear-gradient(transparent 0, rgba(255,255,255,0.035) 2px), linear-gradient(90deg, transparent 0, rgba(255,255,255,0.035) 2px)"
-              : "linear-gradient(transparent 0, rgba(0,0,0,0.02) 2px), linear-gradient(90deg, transparent 0, rgba(0,0,0,0.02) 2px)",
-          backgroundSize: "48px 48px",
-          mixBlendMode: "overlay",
-          opacity: 0.9,
-        }}
-        aria-hidden="true"
-      />
-
       {/* Sidebar backdrop */}
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
           className={`fixed inset-0 backdrop-blur-sm z-30 transition-colors duration-200 ${
-            theme === "dark" ? "bg-black/80" : "bg-black/40"
+            theme === "dark" ? "bg-black/70" : "bg-black/30"
           }`}
         />
       )}
@@ -97,15 +86,19 @@ const Dashboard = () => {
         setOpen={setSidebarOpen}
         onAddExpenseClick={() => setAddExpenseOpen(true)}
         onReportClick={() => setReportOpen(true)}
+        onCategoryClick={() => {
+          setActivePage("categories");
+        }}
         userName={DEMO_USER_NAME}
         userRole={userRole}
         theme={theme}
         onThemeChange={setTheme}
+        activePage={activePage}
       />
 
       {/* Main Content */}
       <main
-        className={` relative z-20 min-h-screen flex flex-col transition-[margin] duration-300 ease-out
+        className={`relative z-20 min-h-screen flex flex-col transition-[margin] duration-300 ease-out
           ${sidebarOpen ? "ml-64" : "ml-0"}`}
       >
         {/* Header */}
@@ -126,28 +119,44 @@ const Dashboard = () => {
           filteredExpenses={filteredExpenses}
           onReportClick={() => setReportOpen(true)}
           onAddExpenseClick={() => setAddExpenseOpen(true)}
+          activePage={activePage}
+          onPageChange={setActivePage}
         />
 
-        {/* Dashboard Content */}
-        <div
-          className={`flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 py-8 flex flex-col gap-8 transition-all duration-200 ${searchFocused && searchQuery.trim() ? "blur-sm opacity-40 pointer-events-none" : ""}`}
-        >
-          <StatsGrid stats={stats} expensesCount={expenses.length} />
+        {/* Page Content */}
+        {activePage === "categories" ? (
+          <CategoryAnalysis
+            stats={stats}
+            onBack={() => setActivePage("dashboard")}
+          />
+        ) : (
+          <div
+            className={`flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 py-8 flex flex-col gap-6 transition-all duration-200 ${searchFocused && searchQuery.trim() ? "blur-sm opacity-40 pointer-events-none" : ""}`}
+          >
+            <StatsGrid stats={stats} expensesCount={expenses.length} />
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 min-h-[400px]">
-            <SpendingChart data={stats.dailyStats} />
-            <CategoryChart
-              data={stats.categoryStats}
-              total={stats.totalExpense}
-            />
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 min-h-[400px]">
+              <SpendingChart data={stats.dailyStats} />
+              <CategoryChart
+                data={stats.categoryStats}
+                total={stats.totalExpense}
+              />
+            </div>
+
+            {/* New Payment Mode Chart */}
+            <PaymentModeChart expenses={expenses} />
+
+            <RecentTransactions expenses={expenses} onDelete={deleteExpense} />
           </div>
-
-          <RecentTransactions expenses={expenses} onDelete={deleteExpense} />
-        </div>
+        )}
 
         {/* Footer */}
         <footer
-          className={`mt-auto border-t py-6 text-center text-xs transition-all duration-200 ${theme === "dark" ? "border-white/5 text-gray-600" : "border-gray-200 text-gray-500"} ${searchFocused && searchQuery.trim() ? "blur-sm opacity-30 pointer-events-none" : ""}`}
+          className={`mt-auto border-t py-5 text-center text-xs transition-all duration-200 ${
+            theme === "dark"
+              ? "border-white/[0.04] text-zinc-600"
+              : "border-gray-200 text-gray-400"
+          } ${searchFocused && searchQuery.trim() ? "blur-sm opacity-30 pointer-events-none" : ""}`}
         >
           Built with ♥ by {DEMO_USER_NAME} · Demo Mode
         </footer>
@@ -159,7 +168,7 @@ const Dashboard = () => {
         onClose={() => setAddExpenseOpen(false)}
         onAdd={addExpense}
       />
-      <ReportDrawer open={reportOpen} onClose={() => setReportOpen(false)} />
+      <ReportDrawer open={reportOpen} onClose={() => setReportOpen(false)} expenses={expenses} />
     </div>
   );
 };

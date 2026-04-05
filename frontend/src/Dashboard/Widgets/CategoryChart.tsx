@@ -8,8 +8,8 @@ interface CategoryChartProps {
 }
 
 const CategoryChart = ({ data, total }: CategoryChartProps) => (
-  <BentoCard className="flex flex-col min-h-[380px]">
-    <h3 className="text-base font-semibold text-white mb-2 shrink-0">
+  <BentoCard className="flex flex-col min-h-[380px] animate-fade-in-up delay-4">
+    <h3 className="text-sm font-semibold text-zinc-300 mb-2 shrink-0 tracking-wide uppercase">
       Breakdown
     </h3>
 
@@ -42,7 +42,7 @@ const CategoryChart = ({ data, total }: CategoryChartProps) => (
 
           {/* Center label */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-gray-500 text-[10px] font-medium uppercase tracking-wider">
+            <span className="text-zinc-500 text-[10px] font-medium uppercase tracking-wider">
               Total
             </span>
             <span className="text-xl font-bold text-white tracking-tight">
@@ -57,13 +57,13 @@ const CategoryChart = ({ data, total }: CategoryChartProps) => (
             {data.map((entry, index) => (
               <div
                 key={index}
-                className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/5 border border-white/5"
+                className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/[0.03] border border-white/[0.05]"
               >
                 <div
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ backgroundColor: getCategoryStyle(entry._id).color }}
                 />
-                <span className="text-[11px] font-medium text-gray-400 whitespace-nowrap">
+                <span className="text-[11px] font-medium text-zinc-400 whitespace-nowrap">
                   {entry._id}
                 </span>
               </div>
@@ -72,7 +72,7 @@ const CategoryChart = ({ data, total }: CategoryChartProps) => (
         </div>
       </>
     ) : (
-      <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
+      <div className="flex-1 flex items-center justify-center text-zinc-500 text-sm">
         No data yet
       </div>
     )}

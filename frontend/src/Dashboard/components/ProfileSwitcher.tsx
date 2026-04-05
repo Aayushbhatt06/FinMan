@@ -19,11 +19,11 @@ const ProfileSwitcher = ({
     <div className="relative">
       <button
         onClick={onRoleMenuToggle}
-        className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all duration-300 ring-1 ${
+        className={`w-9 h-9 rounded-lg flex items-center justify-center font-semibold text-xs transition-all duration-300 border ${
           theme === "dark"
-            ? "bg-gradient-to-br from-purple-600 to-purple-800 text-white ring-purple-400/30 hover:ring-purple-400/50 hover:shadow-lg hover:shadow-purple-500/20"
-            : "bg-gradient-to-br from-purple-500 to-purple-600 text-white ring-purple-400/40 hover:ring-purple-400/60 hover:shadow-lg hover:shadow-purple-500/20"
-        } transform hover:scale-105`}
+            ? "bg-white/[0.06] text-zinc-300 border-white/[0.08] hover:bg-white/[0.1] hover:border-white/[0.12]"
+            : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+        }`}
       >
         {userRole === "Admin" ? "A" : "V"}
       </button>
@@ -31,27 +31,27 @@ const ProfileSwitcher = ({
       {/* Dropdown Menu */}
       {roleMenuOpen && (
         <div
-          className={`absolute top-full right-0 mt-3 w-56 rounded-xl border shadow-2xl backdrop-blur-md z-50 transform transition-all duration-200 origin-top-right ${
+          className={`absolute top-full right-0 mt-2 w-52 rounded-xl border shadow-2xl backdrop-blur-xl z-50 ${
             theme === "dark"
-              ? "bg-slate-900/95 border-purple-500/30 shadow-purple-500/15"
-              : "bg-white/95 border-purple-400/40 shadow-purple-400/10"
+              ? "bg-[#141620]/95 border-white/[0.08] shadow-black/40"
+              : "bg-white/95 border-gray-200 shadow-gray-300/30"
           }`}
         >
-          <div className="p-3">
+          <div className="p-2">
             {/* Admin Option */}
             <button
               onClick={() => {
                 onUserRoleChange("Admin");
                 onRoleMenuToggle();
               }}
-              className={`w-full p-3 rounded-lg text-left mb-2 transition-all border ${
+              className={`w-full p-2.5 rounded-lg text-left mb-1 transition-all border ${
                 userRole === "Admin"
                   ? theme === "dark"
-                    ? "bg-purple-600/30 border-purple-500/50"
-                    : "bg-purple-500/20 border-purple-400/50"
+                    ? "bg-emerald-500/10 border-emerald-500/20"
+                    : "bg-emerald-50 border-emerald-200"
                   : `border-transparent ${
                       theme === "dark"
-                        ? "hover:bg-slate-800/50"
+                        ? "hover:bg-white/[0.04]"
                         : "hover:bg-gray-100"
                     }`
               }`}
@@ -60,23 +60,29 @@ const ProfileSwitcher = ({
                 <div>
                   <p
                     className={`text-sm font-semibold ${
-                      theme === "dark" ? "text-purple-200" : "text-purple-700"
+                      userRole === "Admin"
+                        ? theme === "dark"
+                          ? "text-emerald-400"
+                          : "text-emerald-700"
+                        : theme === "dark"
+                          ? "text-zinc-200"
+                          : "text-gray-900"
                     }`}
                   >
                     Admin
                   </p>
                   <p
-                    className={`text-xs mt-1 ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    className={`text-[11px] mt-0.5 ${
+                      theme === "dark" ? "text-zinc-500" : "text-gray-500"
                     }`}
                   >
-                    Full access to all features
+                    Full access
                   </p>
                 </div>
                 {userRole === "Admin" && (
                   <div
                     className={`w-2 h-2 rounded-full ${
-                      theme === "dark" ? "bg-purple-400" : "bg-purple-600"
+                      theme === "dark" ? "bg-emerald-400" : "bg-emerald-600"
                     }`}
                   />
                 )}
@@ -89,14 +95,14 @@ const ProfileSwitcher = ({
                 onUserRoleChange("Viewer");
                 onRoleMenuToggle();
               }}
-              className={`w-full p-3 rounded-lg text-left mb-2 transition-all border ${
+              className={`w-full p-2.5 rounded-lg text-left mb-1 transition-all border ${
                 userRole === "Viewer"
                   ? theme === "dark"
-                    ? "bg-purple-600/30 border-purple-500/50"
-                    : "bg-purple-500/20 border-purple-400/50"
+                    ? "bg-emerald-500/10 border-emerald-500/20"
+                    : "bg-emerald-50 border-emerald-200"
                   : `border-transparent ${
                       theme === "dark"
-                        ? "hover:bg-slate-800/50"
+                        ? "hover:bg-white/[0.04]"
                         : "hover:bg-gray-100"
                     }`
               }`}
@@ -105,23 +111,29 @@ const ProfileSwitcher = ({
                 <div>
                   <p
                     className={`text-sm font-semibold ${
-                      theme === "dark" ? "text-purple-200" : "text-purple-700"
+                      userRole === "Viewer"
+                        ? theme === "dark"
+                          ? "text-emerald-400"
+                          : "text-emerald-700"
+                        : theme === "dark"
+                          ? "text-zinc-200"
+                          : "text-gray-900"
                     }`}
                   >
                     Viewer
                   </p>
                   <p
-                    className={`text-xs mt-1 ${
-                      theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    className={`text-[11px] mt-0.5 ${
+                      theme === "dark" ? "text-zinc-500" : "text-gray-500"
                     }`}
                   >
-                    View expenses only
+                    View only
                   </p>
                 </div>
                 {userRole === "Viewer" && (
                   <div
                     className={`w-2 h-2 rounded-full ${
-                      theme === "dark" ? "bg-purple-400" : "bg-purple-600"
+                      theme === "dark" ? "bg-emerald-400" : "bg-emerald-600"
                     }`}
                   />
                 )}
@@ -130,26 +142,21 @@ const ProfileSwitcher = ({
 
             {/* Divider */}
             <div
-              className={`my-2 h-px ${
-                theme === "dark"
-                  ? "bg-gradient-to-r from-purple-500/0 via-purple-500/20 to-purple-500/0"
-                  : "bg-gradient-to-r from-purple-400/0 via-purple-400/20 to-purple-400/0"
+              className={`my-1.5 h-px ${
+                theme === "dark" ? "bg-white/[0.05]" : "bg-gray-200"
               }`}
             />
 
             {/* Logout Button */}
             <button
-              className={`w-full p-3 rounded-lg flex items-center justify-center gap-2 transition-all border border-transparent ${
+              className={`w-full p-2.5 rounded-lg flex items-center justify-center gap-2 transition-all ${
                 theme === "dark"
-                  ? "hover:bg-red-600/20 hover:border-red-500/30 text-red-400 hover:text-red-300"
-                  : "hover:bg-red-500/10 hover:border-red-400/20 text-red-600 hover:text-red-700"
+                  ? "hover:bg-red-500/10 text-zinc-500 hover:text-red-400"
+                  : "hover:bg-red-50 text-gray-500 hover:text-red-600"
               }`}
-              onClick={() => {
-                // Just close the menu for now - logout logic can be added later
-                onRoleMenuToggle();
-              }}
+              onClick={() => onRoleMenuToggle()}
             >
-              <LogOut size={16} />
+              <LogOut size={14} />
               <span className="text-sm font-medium">Sign Out</span>
             </button>
           </div>
