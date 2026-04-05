@@ -74,10 +74,10 @@ const CategoryComparisonChart = ({
                 fontWeight: 500,
               }}
               itemStyle={{ color: "#f4f4f5", fontSize: "13px" }}
-              formatter={(value: number) => [
-                `₹${value.toLocaleString()}`,
-                "Total",
-              ]}
+              formatter={(value): [string, string] => {
+                const num = Number(value || 0);
+                return [`₹${num.toLocaleString()}`, "Total"];
+              }}
               cursor={{ fill: "rgba(255,255,255,0.03)" }}
             />
             <Bar dataKey="total" radius={[6, 6, 0, 0]} maxBarSize={40}>
@@ -87,7 +87,7 @@ const CategoryComparisonChart = ({
                   fill={getCategoryStyle(entry.category).color}
                   opacity={
                     selectedCategory === "all" ||
-                    selectedCategory === entry.category
+                      selectedCategory === entry.category
                       ? 1
                       : 0.2
                   }

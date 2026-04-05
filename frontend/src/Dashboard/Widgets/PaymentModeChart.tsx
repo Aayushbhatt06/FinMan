@@ -108,7 +108,7 @@ const PaymentModeChart = ({ expenses }: PaymentModeChartProps) => {
                 marginBottom: "4px",
                 fontWeight: 500,
               }}
-              formatter={(value: number) => `₹${value.toLocaleString()}`}
+              formatter={(value) => `₹${Number(value).toLocaleString()}`}
               cursor={{ fill: "rgba(255,255,255,0.03)" }}
             />
             <Legend
